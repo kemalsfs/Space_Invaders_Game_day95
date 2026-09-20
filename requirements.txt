@@ -1,0 +1,3 @@
+# Day 95: Space Invaders Game (Python Turtle Engine)
+# Core game utilizes Python 3.14 standard library (turtle, tkinter, winsound, math, random, time, threading)
+# No external pip dependencies required.
