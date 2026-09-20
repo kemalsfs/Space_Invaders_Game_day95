@@ -4,6 +4,7 @@ Central game loop, 60 FPS update cycle, input dispatch, collision router, and st
 """
 
 from turtle import Screen
+import turtle
 import time
 
 from player import Player
@@ -99,6 +100,11 @@ class SpaceInvadersGame:
                 self.player_lasers.append(laser)
                 sound_effects.play_laser_sound()
 
+    def _handle_restart(self):
+        """Restarts the game when in GAME_OVER state."""
+        if self.state == STATE_GAME_OVER:
+            self._restart_game()
+
     def _toggle_pause(self):
         if self.state == STATE_PLAYING:
             self.state = STATE_PAUSED
@@ -141,21 +147,24 @@ class SpaceInvadersGame:
 
     def run(self):
         """Master 60 FPS game loop."""
-        while True:
-            frame_start = time.time()
+        try:
+            while True:
+                frame_start = time.time()
 
-            if self.state == STATE_PLAYING:
-                self._update_playing()
-            elif self.state == STATE_WAVE_CLEARED:
-                if time.time() >= self.wave_transition_time:
-                    self._next_wave()
+                if self.state == STATE_PLAYING:
+                    self._update_playing()
+                elif self.state == STATE_WAVE_CLEARED:
+                    if time.time() >= self.wave_transition_time:
+                        self._next_wave()
 
-            self.screen.update()
+                self.screen.update()
 
-            # Target 60 FPS (~16.6 ms per frame)
-            elapsed = time.time() - frame_start
-            sleep_time = max(0.001, 0.016 - elapsed)
-            time.sleep(sleep_time)
+                # Target 60 FPS (~16.6 ms per frame)
+                elapsed = time.time() - frame_start
+                sleep_time = max(0.001, 0.016 - elapsed)
+                time.sleep(sleep_time)
+        except (turtle.Terminator, KeyboardInterrupt):
+            pass
 
     def _update_playing(self):
         # 1. Player continuous movement
